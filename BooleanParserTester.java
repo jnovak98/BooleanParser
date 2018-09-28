@@ -1,4 +1,6 @@
 import static org.junit.Assert.*;
+
+import java.util.Arrays;
 import java.util.Iterator;
 import org.junit.Test;
 
@@ -99,7 +101,8 @@ public class BooleanParserTester {
 	}
 	
 	@Test
-	public void parserTester(){
+	public void parserAndStateTester(){
+		//uses example case in assignment
 		BooleanList b = new BooleanList();
 		b.add(Variable.build("a"));
 		b.add(Type.AND);
@@ -110,7 +113,26 @@ public class BooleanParserTester {
 		b.add(Variable.build("c"));
 		b.add(Type.CLOSE);
 		State s = Parser.parse(b);
+		//shows that you can convert from tree to list 
+		//and back without changing order of terms (since toString for expressions
+		//converts to a list)
 		assertTrue(b.toString().equals(s.getExpression().toString()));
-		
+	}
+	
+	@Test
+	public void workingListAndReductionTester() {
+		WorkingList w = new WorkingList();
+		Variable a = Variable.build("a");
+		w.add(a);
+		Reduction r1 = Reduction.build(Arrays.asList(Type.VARIABLE), (list) -> Term.build(list.get(0)));
+		Reduction r2 = Reduction.build(Arrays.asList(Type.TERM), (list) -> Expression.build(true,list.get(0)));
+		assertTrue(w.canApplyReduction(r1));
+		assertFalse(w.canApplyReduction(r2));
+		w.applyReduction(r1);
+		assertTrue(w.getList().get(0).getType() == Type.TERM);
+		assertTrue(w.canApplyReduction(r2));
+		assertFalse(w.canApplyReduction(r1));
+		w.applyReduction(r2);
+		assertTrue(w.getList().get(0).getType() == Type.EXPRESSION);
 	}
 }
