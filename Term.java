@@ -1,4 +1,5 @@
 import java.util.HashSet;
+import java.util.Optional;
 import java.util.Set;
 
 public class Term extends AbstractTreeSymbol {
@@ -44,10 +45,19 @@ public class Term extends AbstractTreeSymbol {
 	public String toString() {
 		return this.toList().toString();
 	}
+	
+	@Override
+	public Symbol simplified(){
+		return build(subexpression.simplified());
+	}
+
+	@Override
+	public Optional<Symbol> subterm() {
+		return Optional.of(subexpression);
+	}
 
 	@Override
 	public long complexity() {
 		return subexpression.complexity();
 	}
-
 }

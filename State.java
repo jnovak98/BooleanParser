@@ -1,4 +1,5 @@
 import java.util.List;
+import java.util.Objects;
 
 public final class State {
 	private final boolean correct;
@@ -11,6 +12,7 @@ public final class State {
 	}
 	
 	static final State build(List<Symbol> workingList){
+		Objects.requireNonNull(workingList);
 		boolean correct = workingList.size() == 1 && workingList.get(0).getType() == Type.EXPRESSION;
 		return new State(correct, workingList);
 	}

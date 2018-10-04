@@ -1,4 +1,5 @@
 import java.util.Objects;
+import java.util.Optional;
 
 public final class Expression extends AbstractTreeSymbol {
 	private final Symbol leftSubexpression;
@@ -72,6 +73,26 @@ public final class Expression extends AbstractTreeSymbol {
 
 	final Symbol getRightSubexpression() {
 		return rightSubexpression;
+	}
+
+	@Override
+	public Symbol simplified() {
+		if(getStructure() == Type.TERM && leftSubexpression.subterm().get().getType() == Type.EXPRESSION){
+			return leftSubexpression.subterm().get().simplified();
+		} else {
+			boolean isPositiveOrConjunction = (getStructure() == Type.TERM) || (getStructure() == Type.AND);
+			if(rightSubexpression == null) //Type is either TERM or NOT
+				return Expression.build(isPositiveOrConjunction,  leftSubexpression.simplified());
+			else{ //Type is either AND or OR 
+				return Expression.build(isPositiveOrConjunction, leftSubexpression.simplified(), rightSubexpression.simplified());
+			}
+		}
+	}
+
+	@Override
+	public Optional<Symbol> subterm() {
+		System.out.println("Subterm (expression): " + leftSubexpression.subterm().get().toString());
+		return (getStructure() == Type.TERM) ? leftSubexpression.subterm() : Optional.empty();
 	}
 	
 }

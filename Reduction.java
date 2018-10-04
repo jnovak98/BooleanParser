@@ -22,7 +22,7 @@ final class Reduction {
 	}
 	
 	final boolean matches(List<Type> typeList){
-		return (this.size() == typeList.size()) && (this.pattern.equals(typeList));
+		return pattern.equals(typeList);
 	}
 	
 	final Symbol apply(List<Symbol> symbolList){

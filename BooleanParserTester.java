@@ -135,4 +135,31 @@ public class BooleanParserTester {
 		w.applyReduction(r2);
 		assertTrue(w.getList().get(0).getType() == Type.EXPRESSION);
 	}
+	
+	@Test
+	public void simplifyAndSubtermTester() {
+		Term t1 = Term.build(Variable.build("A"));
+		Expression e1 = Expression.build(true, t1);
+		Term t2 = Term.build(e1);
+		Expression e2 = Expression.build(true, t2);
+		Term t3 = Term.build(e2);
+		Expression e3 = Expression.build(true, t3);
+		assertTrue(e3.toString().equals("((A))"));
+		Symbol e4 = e3.simplified();
+		assertTrue(e4.toString().equals("A"));	
+		
+		Term t4 = Term.build(Variable.build("A"));
+		Term t4a = Term.build(Expression.build(true, t4));
+		Term t4b = Term.build(Expression.build(true, t4a));
+		Term t5 = Term.build(Variable.build("B"));
+		Term t5a = Term.build(Expression.build(true, t5));
+		Expression e5 = Expression.build(true, t4b);
+		Expression e5a = Expression.build(true, Term.build(e5));
+		Expression e6 = Expression.build(false, t5a);
+		Expression e7 = Expression.build(true, e5a, e6);
+		Expression e7a = Expression.build(true, Term.build(e7));
+		assertTrue(e7a.toString().equals("((((A)))∧¬(B))"));
+		Symbol e8 = e7a.simplified();
+		assertTrue(e8.toString().equals("A∧¬(B)"));
+	}
 }
